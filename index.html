@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+     <h1 id="baslik">Başlık</h1>
+     <input onkeyup="" type="text" id="isim" placeholder="Lütfen İsim Giriniz:">
+     <br><br>
+     <input type="text" id="sonuc" disabled placeholder="Adınızın Büyük Versiyonu">
+    <br><br><br><br><br>
+    <button onclick="VerileriCek()">Verileri Çek</button>
+    <div id="divrim">
+        <table borde="1">
+            <thead>
+                <tr>
+                    <th>Fotoğraf</th>
+                    <th>İsim</th>
+                    <th>Soyisim</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="tblBody"></tbody>
+        </table>
+    </div>
+    <br><br><br><br><br>
+
+    <h1>Üye Ekle</h1>
+    <input type="text" placeholder="ÜyeAdınıGiriniz:" id="gelenadi"> 
+    <input type="text" placeholder="ÜyeMesleğiGiriniz:"id="gelenmeslek">
+    <button onclick="VeriEkle()">Ekle</button>
+    <br><br><br><br><br>
+    <h1>Üye Güncelle</h1>
+    <input type="text" placeholder="Güncellenecek Üyenin Adını Giriniz:" id="guncellenecekuyeadi">
+    <input type="text" placeholder="Güncellenecek Üyenin Mesleğini Giriniz:" id="guncellenecekuyesoyadi">
+    <button onclick="VeriGüncelle()">Guncelle</button>  
+
+
+
+
+
+
+
+    <script>
+                function Buyut()
+        {
+           var isim=String($('#isim').val());
+           document.getElementById('sonuc').value=isim.toLocaleUpperCase("tr-TR");
+        }
+        function VerileriCek()
+        {
+            $.ajax(
+            {
+              url:'https://reqres.in/api/users',
+              type:'GET',
+              success:function(sonuc)
+              {
+                TabloOluştur(sonuc)
+              },
+              error:function(error)
+              {
+                console.error(error);
+              }
+            })
+        }
+        function TabloOluştur(veri)
+        {
+            var veriElemanAdı=["avatar","first_name","last_name","email"]
+            for (let k=0; k< veri.data.length; k++)
+            {
+                var satır=document.createElement('tr')
+                for(let i=0; i<4; i++)
+                {
+                    var hücre=document.createElement('td');
+                    if(i==0)
+                    {
+                        hücre.innerHTML = '<img style="width:70px;" src='+veri.data[k][veriElemanAdı[i]]+'>'
+                    }
+                    else
+                    hücre.innerText=veri.data[k][veriElemanAdı[i]]
+                satır.appendChild(hücre);
+                }
+                document.getElementById('tblBody').appendChild(satır);
+            }
+        }
+        function VeriEkle()
+        {
+            var gelenisim=$('#gelenadi').val();
+            var gelenmeslek=$('#gelenmeslek').val();
+            $.ajax({
+                url:'https://reqres.in/api/users',
+                type:'POST',
+                data:{name:gelenisim,job:gelenmeslek},
+                success: function (sonuc2){
+                console.log(sonuc2)
+                },
+                error: function(error2){
+                console.error(error2);
+                }
+            })
+        }
+        function VeriGüncelle()
+        {
+            var guncellenecekuyeadi=$('#guncellenecekuyeadi').val();
+            var guncellenecekuyesoyadi=$('#guncellenecekuyesoyadi').val();
+            $.ajax(
+            {
+                url:'https://reqres.in/api/users/2',
+                type:'PUT',
+                data:{first_name:guncellenecekuyeadi,last_name:guncellenecekuyesoyadi},
+                success: function(sonuc)
+                {
+                    console.log(sonuc);
+                },
+                error: function(error)
+                {
+                    console.log(error);
+                }
+            })
+        }
+
+    </script>
+</body>
+</html>
